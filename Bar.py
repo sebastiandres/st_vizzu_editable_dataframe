@@ -23,7 +23,7 @@ c1, c2 = st.columns(2)
 with c1:
     df = pd.DataFrame({
                 "pokemon": ["Bulbasaur", "Charmander", "Pikachu", "Rattata", "Snorlax"],
-                #"active": [False, True, True, True, False],
+                "active": [False, True, True, True, False],
                 "count": [1, 2, 1, 10, 1],
             })
     st.subheader("My Pokedex (editable table)")
@@ -31,6 +31,11 @@ with c1:
         df,
         use_container_width=True,
         num_rows="dynamic",
+        column_config={
+            "pokemon": st.column_config.TextColumn(default="Ditto?"),
+            "active": st.column_config.CheckboxColumn(default=True),
+            "count": st.column_config.NumberColumn(default=1),
+        },
     )
     st.caption("If not familiar with how to work with editable dataframes, check the [documentation](http://docs.streamlit.io/library/advanced-features/dataframes#edit-data-with-stdata_editor).")
 
@@ -43,6 +48,7 @@ if edited_df.isnull().values.sum()!=0:
 else:
     warning_placeholder.empty()
 clean_df = edited_df.dropna()
+clean_df = clean_df[clean_df["active"]]
 # Create/Update the data
 data = Data()
 data.add_data_frame(clean_df)
@@ -51,7 +57,7 @@ chart = Chart(width=f"100%", display=DisplayTarget.MANUAL)
 chart.animate(data)
 # Add the first chart
 chart.animate(
-    #Data.filter("record['active'] == true"),
+    #Data.filter("record['active'] == true"), # This is not working
     Config({"x": "pokemon", "y": "count", "color":"pokemon", "title": "My Pokedex (Graph)"}),
 )
 with c2:
