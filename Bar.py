@@ -32,7 +32,7 @@ with c1:
         use_container_width=True,
         num_rows="dynamic",
         column_config={
-            "pokemon": st.column_config.TextColumn(default="Ditto?"),
+            #"pokemon": st.column_config.TextColumn(default="Ditto?"),
             "active": st.column_config.CheckboxColumn(default=True),
             "count": st.column_config.NumberColumn(default=1),
         },
