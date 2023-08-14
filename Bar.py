@@ -20,15 +20,18 @@ warning_placeholder = st.empty()
 ###############################################################################
 c1, c2 = st.columns(2)
 
+initial_df = pd.DataFrame({
+            "pokemon": ["Bulbasaur", "Charmander", "Pikachu", "Rattata", "Snorlax"],
+            "active": [False, True, True, True, False],
+            "count": [1, 2, 1, 10, 1],
+        })
+if "current_df" not in st.session_state:
+    st.session_state.current_df = initial_df
+    
 with c1:
-    df = pd.DataFrame({
-                "pokemon": ["Bulbasaur", "Charmander", "Pikachu", "Rattata", "Snorlax"],
-                "active": [False, True, True, True, False],
-                "count": [1, 2, 1, 10, 1],
-            })
     st.subheader("My Pokedex (editable table)")
     edited_df = st.data_editor(
-        df,
+        initial_df,
         use_container_width=True,
         num_rows="dynamic",
         column_config={
@@ -48,17 +51,27 @@ if edited_df.isnull().values.sum()!=0:
 else:
     warning_placeholder.empty()
 clean_df = edited_df.dropna()
-clean_df = clean_df[clean_df["active"]]
 # Create/Update the data
-data = Data()
-data.add_data_frame(clean_df)
+current_data = Data()
+current_df = st.session_state.current_df
+current_data.add_data_frame(current_df[current_df["active"]])
+edited_data = Data()
+edited_data.add_data_frame(clean_df[clean_df["active"]])
 # Create the chart
 chart = Chart(width=f"100%", display=DisplayTarget.MANUAL)
-chart.animate(data)
 # Add the first chart
+chart.animate(current_data)
+chart.animate(
+    Config({"x": "pokemon", "y": "count", "color":"pokemon", "title": "My Pokedex (Graph)"}),
+)
+# Add the edited chart
+chart.animate(edited_data)
 chart.animate(
     #Data.filter("record['active'] == true"), # This is not working
     Config({"x": "pokemon", "y": "count", "color":"pokemon", "title": "My Pokedex (Graph)"}),
 )
 with c2:
     html(chart._repr_html_(), height=height)
+
+# Update the dataframe
+st.session_state.current_df = clean_df
