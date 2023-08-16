@@ -1,3 +1,4 @@
 streamlit
 ipyvizzu
 pandas
+streamlit-vizzu

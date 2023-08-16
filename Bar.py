@@ -1,18 +1,15 @@
 import pandas as pd
 import streamlit as st
 from streamlit.components.v1 import html
-from ipyvizzu import Data, Config, Style, Chart, DisplayTarget
-
-###############################################################################
-# Parameters
-###############################################################################
-height = 600
+from streamlit_vizzu import Config, Data, VizzuChart
 
 ###############################################################################
 # Header of page
 ###############################################################################
 st.set_page_config(layout="wide", page_title="Data Editor", page_icon="🧮")
-st.header("Editable dataframes and Vizzu charts")
+c1, c2 = st.columns([3, 1])
+c1.header("Editable dataframes and Vizzu charts")
+c2.button("Useless button")
 warning_placeholder = st.empty()
 
 ###############################################################################
@@ -58,7 +55,7 @@ current_data.add_data_frame(current_df[current_df["active"]])
 edited_data = Data()
 edited_data.add_data_frame(clean_df[clean_df["active"]])
 # Create the chart
-chart = Chart(width=f"100%", display=DisplayTarget.MANUAL)
+chart = VizzuChart()
 # Add the first chart
 chart.animate(current_data)
 chart.animate(
@@ -71,7 +68,13 @@ chart.animate(
     Config({"x": "pokemon", "y": "count", "color":"pokemon", "title": "My Pokedex (Graph)"}),
 )
 with c2:
-    html(chart._repr_html_(), height=height)
+    chart.show()
 
 # Update the dataframe
 st.session_state.current_df = clean_df
+
+# Some other links
+_, c1, c2, c3 = st.columns([1,2,2,2])
+c1.caption("[streamlit-vizzu documentation](https://github.com/vizzu-streamlit/streamlit-vizzu/)")
+c2.caption("[streamlit documentation](https://docs.streamlit.io/)")
+c3.caption("[(ipy)vizzu documentation](https://ipyvizzu.vizzuhq.com/latest/)")
