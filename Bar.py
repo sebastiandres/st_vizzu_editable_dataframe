@@ -1,12 +1,11 @@
 import pandas as pd
 import streamlit as st
-from streamlit.components.v1 import html
 from streamlit_vizzu import Config, Data, VizzuChart
 
 ###############################################################################
 # Header of page
 ###############################################################################
-st.set_page_config(layout="wide", page_title="Data Editor", page_icon="🧮")
+st.set_page_config(layout="wide", page_title="Data Editor and Vizzu", page_icon="🧮")
 c1, c2 = st.columns([3, 1])
 c1.header("Editable dataframes and Vizzu charts")
 c2.button("Useless button")
@@ -32,7 +31,6 @@ with c1:
         use_container_width=True,
         num_rows="dynamic",
         column_config={
-            #"pokemon": st.column_config.TextColumn(default="Ditto?"),
             "active": st.column_config.CheckboxColumn(default=True),
             "count": st.column_config.NumberColumn(default=1),
         },
@@ -48,7 +46,7 @@ if edited_df.isnull().values.sum()!=0:
 else:
     warning_placeholder.empty()
 clean_df = edited_df.dropna()
-# Create/Update the data
+# Create/Update the data - use the data stored in session_state as previous data
 current_data = Data()
 current_df = st.session_state.current_df
 current_data.add_data_frame(current_df[current_df["active"]])
