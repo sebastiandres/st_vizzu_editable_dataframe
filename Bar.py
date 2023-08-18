@@ -6,14 +6,19 @@ from streamlit_vizzu import Config, Data, VizzuChart
 # Header of page
 ###############################################################################
 st.set_page_config(layout="wide", page_title="Data Editor and Vizzu", page_icon="🧮")
-c1, c2 = st.columns([3, 1])
+c1, c2 = st.columns([1, 1])
 c1.header("Editable dataframes and Vizzu charts")
 c2.button("Useless button")
 warning_placeholder = st.empty()
 
+if "graph_type" not in st.session_state:
+    st.session_state.graph_type = "Bar"
+
 ###############################################################################
 # The editable dataframe
 ###############################################################################
+graph_sel = st.selectbox("Type of graph", ["Grouped Column", "Pie", "Bubble"])
+
 c1, c2 = st.columns(2)
 
 initial_df = pd.DataFrame({
@@ -37,6 +42,8 @@ with c1:
     )
     st.caption("If not familiar with how to work with editable dataframes, check the [documentation](http://docs.streamlit.io/library/advanced-features/dataframes#edit-data-with-stdata_editor).")
 
+st.session_state.graph_type = graph_sel
+
 ###############################################################################
 # The visualization
 ###############################################################################
@@ -54,17 +61,21 @@ edited_data = Data()
 edited_data.add_data_frame(clean_df[clean_df["active"]])
 # Create the chart
 chart = VizzuChart()
+# Select the plot type
+if st.session_state.graph_type == "Grouped Column":
+    config = Config.groupedColumn({"x": "pokemon", "y": "count", "color":"pokemon", "title": "My Pokedex (Graph)"})
+elif st.session_state.graph_type == "Pie":
+    config = Config.pie({"by": "pokemon", "angle": "count", "color":"pokemon", "title": "My Pokedex (Graph)"})
+elif st.session_state.graph_type == "Bubble":
+    config = Config.bubble({"size": "count", "color":"pokemon", "title": "My Pokedex (Graph)"})
+else:
+    config = Config({"x": "pokemon", "y": "count", "color":"pokemon", "title": "My Pokedex (Graph)"})
 # Add the first chart
 chart.animate(current_data)
-chart.animate(
-    Config({"x": "pokemon", "y": "count", "color":"pokemon", "title": "My Pokedex (Graph)"}),
-)
+chart.animate(config)
 # Add the edited chart
 chart.animate(edited_data)
-chart.animate(
-    #Data.filter("record['active'] == true"), # This is not working
-    Config({"x": "pokemon", "y": "count", "color":"pokemon", "title": "My Pokedex (Graph)"}),
-)
+chart.animate(config)
 with c2:
     chart.show()
 
