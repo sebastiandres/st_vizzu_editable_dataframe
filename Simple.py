@@ -56,9 +56,9 @@ clean_df = edited_df.dropna()
 # Create/Update the data - use the data stored in session_state as previous data
 current_data = Data()
 current_df = st.session_state.current_df
-current_data.add_data_frame(current_df[current_df["active"]])
+current_data.add_df_index(current_df[current_df["active"]])
 edited_data = Data()
-edited_data.add_data_frame(clean_df[clean_df["active"]])
+edited_data.add_df(clean_df[clean_df["active"]])
 # Create the chart
 chart = VizzuChart()
 # Select the plot type
